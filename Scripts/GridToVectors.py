@@ -104,3 +104,7 @@ strmRaster = arcpy.NumPyArrayToRaster(strmArr,lowerleft,25000)
 #Create netfeature class
 msg("...Creating polyline vector file via StreamToFeature tool")
 arcpy.sa.StreamToFeature(strmRaster,fdirRaster,netFC,"FALSE")
+
+#Cleanup
+arcpy.Delete_management(fdirRaster)
+arcpy.Delete_management(strmRaster)
