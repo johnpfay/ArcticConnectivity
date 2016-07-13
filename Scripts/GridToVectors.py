@@ -19,7 +19,7 @@ scratchGDB = os.path.join(scratchDir,"Scratch.gdb")
 
 #Data vars (replace XX with month to get the monthly file...)
 monthlyDir = os.path.join(dataDir,"NSIDC","ndisc0116_icemotion_vectors_v3","monthly_clim")
-templateFN = os.path.join(dataFldr,'icemotion.grid.monthlyclim.XX.n.v3.bin')
+templateFN = os.path.join(monthlyDir,'icemotion.grid.monthlyclim.XX.n.v3.bin')
 
 #File specs
 xDim = 361
@@ -49,14 +49,14 @@ mo = str(1).zfill(2)
 msg("Processing month: {}".format(mo))
     
 #Output Variables
-netFC = os.path.join(scratchDir,"Vectors{}.shp",format(month))
+netFC = os.path.join(scratchDir,"Vectors{}.shp".format(mo))
 msg("...Output will be set to: ".format(netFC))
 
 #Get the monthly filename (from the templateFN)
 monthlyFN = templateFN.replace("XX",mo)
 #Convert icemotion file to numpy array
 with open(monthlyFN,'rb') as inFile:
-    arr = np.fromfile(monthlyFile,valSize).reshape((xDim,yDim,nGrids))
+    arrMO = np.fromfile(monthlyFN,valType).reshape((xDim,yDim,nGrids))
 msg("...Data extracted to array")
 
 #Extract u/v arrays and reshape to 1D data vectors
@@ -79,7 +79,7 @@ thetaRadians = np.arctan2(vValues,uValues)
 
 #Reclassify to flow direction values
 msg("...creating flow direction from angles")
-pi8 = numpy.pi / 8.0
+pi8 = np.pi / 8.0
 fdirVals = np.copy(thetaRadians)
 fdirVals[thetaRadians > (7 * pi8)] = 16     #W
 fdirVals[thetaRadians <= (7 * pi8)] = 32    #NW
