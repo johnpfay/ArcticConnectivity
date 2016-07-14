@@ -64,9 +64,9 @@ msg("...extracting u, v components")
 uValues = arrMO[:,:,0].reshape(-1).astype(np.float)
 vValues = arrMO[:,:,1].reshape(-1).astype(np.float)
 
-#Compute magnitudes (via pythagorean theorem)
+#Compute magnitudes (via pythagorean theorem); * 10 to preserve precision
 msg("...computing magnitudes")
-mValues = np.sqrt(np.square(uValues) + np.square(vValues))
+mValues = np.sqrt(np.square(uValues) + np.square(vValues)) * 10
 
 #Create a mask from the 3rd band
 msg("...creating mask raster")
@@ -104,6 +104,15 @@ strmRaster = arcpy.NumPyArrayToRaster(strmArr,lowerleft,25000)
 #Create netfeature class
 msg("...Creating polyline vector file via StreamToFeature tool")
 arcpy.sa.StreamToFeature(strmRaster,fdirRaster,netFC,"FALSE")
+
+#Add time field (hours consumed traveling across feature
+arcpy.AddField_management(netFC,"Days","FLOAT",8,2)
+#...Select records with GRID_CODE (cm*10/s) > 0
+tmpLyr = arcpy.MakeFeatureLayer_management(netFC,"tmpLyr","GRID_CODE > 0")
+#...Convert to hours required to span the feature
+calcString = "!shape.length! / (0.001 * 86400 * !GRID_CODE!)" #Converts cm*100/sec to m/day to km
+calcString = "!shape.length! * 1000.0 * (1.0 / !GRID_CODE!) * (1/3600.0)"
+arcpy.CalculateField_management(tmpLyr,"Days",calcString,"PYTHON")
 
 #Cleanup
 arcpy.Delete_management(fdirRaster)
