@@ -15,6 +15,7 @@ uvDir = os.path.join(dataDir,"Processed")
 
 #Inputs
 sourceRaster = os.path.join(scratchDir,"Source")
+cellSize = 25000
 arcpy.env.workspace = uvDir
 
 #ArcPy stuff
@@ -58,8 +59,11 @@ for t in range(1,13):
         cXY = srcArr[x,y]
         
         #Get U and V values at the coordinate 
-        uXY = float(uArr[x,y])
+        uXY = float(uArr[x,y]) #cm/s
         vXY = float(vArr[x,y])
+        secPerMonth = 60 * 60 * 24 * 30
+        uXYmo = uXY * secPerMonth / cellSize
+        vXYmo = vXY * secPerMonth / cellSize
 
         #Calculate amounts moving to u and v directions
         v = float(abs(uXY) + abs(vXY))
