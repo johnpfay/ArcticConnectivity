@@ -1,3 +1,10 @@
 *.lock
 *.asc
 *.bin
+*.txt
+*.ASC
+Data/Grace/*
+Data/PolarScienceCenter/*
+Data/Ecco2/*
+Data/GRACE/**
+Scripts/ToRemove/*
