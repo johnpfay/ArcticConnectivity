@@ -19,6 +19,8 @@
 # John.Fay@duke.edu
 
 debug = True
+createASCII = True
+writeRasters = False
 
 import sys, os, gzip
 import numpy as np
@@ -133,12 +135,22 @@ for year in range(2013,2014):
         #Set zeros to NoData
         uBand2 = arcpy.sa.SetNull(uBand,uBand,"Value = 0")
         vBand2 = arcpy.sa.SetNull(vBand,vBand,"Value = 0")
+        #Convert to ASCII files
+        if createASCII:
+            print "    ...Saving as ASCII files"
+            outUFN = os.path.join(outDir,"u{}{}.ASC".format(year,strMonth))
+            outVFN = os.path.join(outDir,"v{}{}.ASC".format(year,strMonth))      
+            uArr = arcpy.RasterToNumPyArray(uBand2,nodata_to_value=0)
+            vArr = arcpy.RasterToNumPyArray(vBand2,nodata_to_value=0)
+            np.savetxt(outUFN,uArr,fmt='%8.6f')
+            np.savetxt(outVFN,vArr,fmt='%8.6f')
         #Create mask
         mask = arcpy.sa.SetNull(vBand,1,"Value <> 0")
         #Composite to output raster and set projection to EASE
-        outRaster = os.path.join(outDir,"uv{}{}.img".format(year,strMonth))
-        arcpy.CompositeBands_management((uBand2,vBand2),outRaster)
-        arcpy.DefineProjection_management(outRaster,srEASE)
+        if writeRasters:
+            outRaster = os.path.join(outDir,"uv{}{}.img".format(year,strMonth))
+            arcpy.CompositeBands_management((uBand2,vBand2),outRaster)
+            arcpy.DefineProjection_management(outRaster,srEASE)
         
         #Clean up
         arcpy.Delete_management(uBand)
