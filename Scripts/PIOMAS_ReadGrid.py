@@ -19,8 +19,8 @@
 # John.Fay@duke.edu
 
 debug = True
-createASCII = False
-writeRasters = True
+createASCII = True
+writeRasters = False
 
 import sys, os, gzip
 import numpy as np
@@ -153,8 +153,8 @@ for year in range(2013,2014):
         #Convert to ASCII files
         if createASCII:
             print "    ...Saving as ASCII files"
-            outUFN = os.path.join(outDir,"u{}{}.ASC".format(year,strMonth))
-            outVFN = os.path.join(outDir,"v{}{}.ASC".format(year,strMonth))      
+            outUFN = os.path.join(outDir,"ASCII","us_{}_{}.ASC".format(year,strMonth))
+            outVFN = os.path.join(outDir,"ASCII","vs_{}_{}.ASC".format(year,strMonth))      
             uArr = arcpy.RasterToNumPyArray(uBand2,nodata_to_value=0)
             vArr = arcpy.RasterToNumPyArray(vBand2,nodata_to_value=0)
             np.savetxt(outUFN,uArr,fmt='%8.6f')
