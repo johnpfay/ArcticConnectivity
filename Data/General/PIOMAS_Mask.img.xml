@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en"><Esri><CreaDate>20160722</CreaDate><CreaTime>14020700</CreaTime><ArcGISFormat>1.0</ArcGISFormat><ArcGISstyle>FGDC CSDGM Metadata</ArcGISstyle><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="c:\program files (x86)\arcgis\desktop10.4\ArcToolbox\Toolboxes\Spatial Analyst Tools.tbx\ExtractByMask" Date="20160722" Time="140207">ExtractByMask MASK.img StudyArea.img C:\workspace\ArcticConnectivity\Data\General\PIOMAS_Mask.img</Process></lineage></DataProperties></Esri></metadata>
