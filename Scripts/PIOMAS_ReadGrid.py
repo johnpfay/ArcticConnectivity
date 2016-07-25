@@ -13,7 +13,10 @@
 #  ftp://pscftp.apl.washington.edu/zhang/PIOMAS/utilities/grid.dat.pop and
 #  ftp://pscftp.apl.washington.edu/zhang/PIOMAS/data/v2.1/other/
 #
-# Output files are saved in the "Processed" folder
+# Output files are saved in the "Processed" folder and are constrained to the extent
+#  of the PIOMAS_Mask.img raster dataset, which was created by creating a 1-NoData mask
+#  from values in a fully interpolated output clipped to the extent of the MaskPoly.shp
+#  feature class.
 #
 # July 2015
 # John.Fay@duke.edu
@@ -35,8 +38,6 @@ rawDir = os.path.join(dataDir,"RawData")
 outDir = os.path.join(dataDir,"Processed")
 
 #Get extent feature class and raster
-extentFC = os.path.join(rootDir,"Data","General","MaskPoly.shp")
-extentGrd = os.path.join(rootDir,"Data","General","StudyArea.img")
 maskRaster = os.path.join(rootDir,"Data","General","PIOMAS_Mask.img")
 arcpy.env.snapRaster = maskRaster
 
@@ -51,19 +52,6 @@ srEASE = arcpy.SpatialReference(3408) #NSIDC_EASE_Grid_North
 xDim = 120
 yDim = 360
 varType = np.float32
-
-#Read the io.dat_360_120.output mask file into an array
-with open(os.path.join(rawDir,'io.dat_360_120.output'),'rt') as grdFile:
-    lineStrings = grdFile.readlines()
-maskArr = np.empty((360,120),dtype=np.int32)
-x=0;y=0
-for lineString in lineStrings:
-    x = 0
-    for i in range(0,720,2):
-        idx = i /2
-        maskArr[x,y] = lineString[idx:idx+2]
-        x += 1
-    y += 1
 
 #Read the grid.dat.pro data containing lat,long, and angle data
 with open(os.path.join(rawDir,"grid.dat.pop"),'r') as grdFile:
@@ -88,9 +76,10 @@ for year in range(2013,2014):
     with gzip.open(yearFN,'rb') as grdFile:
         grdData = grdFile.read()
         flatArr = np.frombuffer(grdData,dtype=varType).reshape(-1,yDim,xDim)
-        #This will be an array 240 x 360 x 120;
-        # the 1st dimension is the Jan U vals; the 12th dimension is the V vals
+        ## This will be an array 240 x 360 x 120;
+        ## the 1st dimension is further subset into: Month/Depth Level/U-V slices
 
+    #Loop through the 12 months of data in the yearly data file
     for month in range(12):
         strMonth = str(month+1).zfill(2)
         print "...processing month {}".format(strMonth)
@@ -102,22 +91,21 @@ for year in range(2013,2014):
         sliceU = flatArr[month*20,:,:]
         sliceV = flatArr[month*20 + 10,:,:]
         
-        #Create the output file
+        #Create the output point file
         outFN = "Pts{}{}.shp".format(year,strMonth)
         if arcpy.Exists(os.path.join(outDir,outFN)) and not debug:
             print "Already created, skipping."
             continue
         print "   ...Creating point file for month: {}".format(strMonth)
-        
-        #outFC = arcpy.CreateFeatureclass_management(outDir,outFN,"POINT",spatial_reference=srWGS84)
         outFC = arcpy.CreateFeatureclass_management("in_memory","tmp","POINT",spatial_reference=srWGS84)
+        
         #Add fields
         print "   ...Adding fields"
         arcpy.AddField_management(outFC,"Angle","FLOAT",8,2)
         arcpy.AddField_management(outFC,"U","FLOAT",8,2)
         arcpy.AddField_management(outFC,"V","FLOAT",8,2)
 
-        #Add features
+        #Loop through each data point and add ad features to the output feature class
         cursor = arcpy.da.InsertCursor(outFC,['SHAPE@XY','Angle','U','V'])
         for x in range(yDim):
             for y in range(xDim):
