@@ -21,7 +21,6 @@
 # July 2015
 # John.Fay@duke.edu
 
-debug = True
 createASCII = True
 writeRasters = False
 
@@ -93,7 +92,7 @@ for year in range(2013,2014):
         
         #Create the output point file
         outFN = "Pts{}{}.shp".format(year,strMonth)
-        if arcpy.Exists(os.path.join(outDir,outFN)) and not debug:
+        if arcpy.Exists(os.path.join(outDir,outFN)):
             print "Already created, skipping."
             continue
         print "   ...Creating point file for month: {}".format(strMonth)
