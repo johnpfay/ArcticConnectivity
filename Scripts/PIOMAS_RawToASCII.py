@@ -75,7 +75,7 @@ lngArr = flatArr[1,:,:]
 anglArr = flatArr[6,:,:] #Angle
 
 #Loop through years
-for year in range(2013,2014):
+for year in range(1978,2014):
     print "Processing data for {}".format(year)
     yearFN = os.path.join(rawDir,"uo1_10.H{}.gz".format(year))
     #Read the entire annual data (all levels) into array
