@@ -1,15 +1,11 @@
 *.lock
-*.asc
-*.bin
-*.txt
-*.ASC
-Data/Grace/*
-Data/PolarScienceCenter/*
-Data/Ecco2/*
-Data/GRACE/**
-Scripts/ToRemove/*
-Scripts/Sandbox/*
-Data/NSIDC/ndisc0116_icemotion_vectors_v3/*
 *.rrd
 log
-!Readme.txt
+
+#Ignore data files in data folders
+Data/PolarScienceCenter/PIOMAS/RawData/*.*
+Data/PolarScienceCenter/PIOMAS/Processed/ASCII/*.ASC
+Data/PolarScienceCenter/PIOMAS/Processed/PointFeatures/*.*
+Data/PolarScienceCenter/PIOMAS/Processed/Rasters/*.*
+Data/SimDir/*.ASC
+Data/SimDir/GISFiles/*.*
