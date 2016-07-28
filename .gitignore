@@ -12,3 +12,4 @@ Scripts/Sandbox/*
 Data/NSIDC/ndisc0116_icemotion_vectors_v3/*
 *.rrd
 log
+!Readme.txt
