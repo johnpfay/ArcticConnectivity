@@ -99,7 +99,8 @@ for year in range(1978,2014):
         
         #Create the output point file
         outFN = "Pts{}{}.shp".format(year,strMonth)
-        if arcpy.Exists(os.path.join(outDir,outFN)):
+        outFC2 = os.path.join(outDir,"PointFeatures",outFN)
+        if arcpy.Exists(os.path.join(outDir,outFC2)):
             print "Already created, skipping."
             continue
         print "   ...Creating point file for month: {}".format(strMonth)
@@ -126,7 +127,6 @@ for year in range(1978,2014):
         
         #Reproject to EASE grid
         print "   ...reprojecting to EASE projection"
-        outFC2 = os.path.join(outDir,outFN)
         outFC2 = arcpy.Project_management(outFC,outFC2,srEASE)
     
         #Interpolate U and V values to raster
