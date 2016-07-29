@@ -24,6 +24,10 @@ dataDir = os.path.join(rootDir,"Data")
 scratchDir = os.path.join(rootDir,"Scratch")
 simDir = os.path.join(dataDir,"SimDir")
 
+#Create SimDir if it doesn't exist
+if not os.path.exists(simDir):
+    os.mkdir(simDir)
+
 #Get extent feature class and raster, located in the Data/General folder
 extentFC = os.path.join(rootDir,"Data","General","MaskPoly.shp")
 maskRaster = os.path.join(rootDir,"Data","General","PIOMAS_Mask.img")
