@@ -11,7 +11,6 @@
 
 import sys, os, gzip, arcpy
 import numpy as np
-from scipy.io import matlab as ml
 
 #Check out the spatial analyst extension
 arcpy.CheckOutExtension('spatial')
