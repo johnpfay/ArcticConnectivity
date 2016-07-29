@@ -36,12 +36,18 @@ dataDir = os.path.join(rootDir,"Data","PolarScienceCenter","PIOMAS")    #Root fo
 rawDir = os.path.join(dataDir,"RawData")                                #contains raw PIOMAS files
 
 ##Output folders
+scratchDir = os.path.join(rootDir,"Scratch","Scratch.gdb")              #To hold scratch/temporary files
+rawDir = os.path.join(dataDir,"RawData")                                #Folder containing raw PIOMAS files
+outDir = os.path.join(dataDir,"Processed")
 pointFCDir = os.path.join(dataDir,"Processed","PointFeatures")          #To hold output point files
 rasterDir = os.path.join(dataDir,"Processed","Raster")                  #To hold output raster files
 ASCIIDir = os.path.join(dataDir,"Processed","ASCII")                    #To hold output ASCII u and v files (monthly)
-scratchDir = os.path.join(rootDir,"Scratch","Scratch.gdb")              #To hold scratch/temporary files
-rawDir = os.path.join(dataDir,"RawData")
-outDir = os.path.join(dataDir,"Processed")
+
+##Create output folders, if not present
+for theDir in (outDir,pointFCDir,rasterDir,ASCIIDir):
+    if not os.path.exists(theDir):
+        print "Creating {}".format(theDir)
+        os.mkdir(theDir)
 
 #Get extent feature class and raster
 maskRaster = os.path.join(rootDir,"Data","General","PIOMAS_Mask.img")
