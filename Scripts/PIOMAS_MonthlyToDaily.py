@@ -15,6 +15,13 @@ dataDir = os.path.join(rootDir,"Data","PolarScienceCenter","PIOMAS","Processed",
 simDir = os.path.join(rootDir,"Data","SimDir")
 scratchDir = os.path.join(rootDir,"Scratch")
 
+#Ensure the output folders exist in the SimDir folder
+for theFldr in ('uAtSurface','vAtSurface','uAtDepth','vAtDepth'):
+    theFldrName = os.path.join(simDir,theFldr)
+    if not os.path.exists(theFldrName):
+        print "Creating {}".format(theFldrName)
+        os.mkdir(theFldrName)
+
 #Days in month
 dayDict = {1:31,2:28,3:31,4:30,5:31,6:30,7:31,8:31,9:30,10:31,11:30,12:31}
 
