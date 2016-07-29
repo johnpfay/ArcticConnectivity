@@ -23,7 +23,7 @@ rawDir = os.path.join(piomasDir,"RawData")
 for theFldr in (polarDir,piomasDir,rawDir):
     if not os.path.exists(theFldr):
         print "Creating {}".format(theFldr)
-        os.mkdir(theFlder)
+        os.mkdir(theFldr)
 
 #Download the utility files
 theIODatURL = theUtilURL + "io.dat_360_120.output"
