@@ -49,6 +49,10 @@ for theDir in (outDir,pointFCDir,rasterDir,ASCIIDir):
         print "Creating {}".format(theDir)
         os.mkdir(theDir)
 
+##Create scratch file geodatabase, if not present
+if not os.path.exists(scratchDir):
+    arcpy.CreateFileGDB_management(os.path.dirname(scratchDir),"Scratch.gdb")
+
 #Get extent feature class and raster
 maskRaster = os.path.join(rootDir,"Data","General","PIOMAS_Mask.img")
 arcpy.env.snapRaster = maskRaster
