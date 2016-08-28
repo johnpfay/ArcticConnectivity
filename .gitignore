@@ -12,5 +12,5 @@ Data/SimDir/GISFiles/*.*
 
 #Results
 Data/Arctic_Feb2012_265day_Results/*
-Data/Treml_Arctic_Output/*
+#Data/Treml_Arctic_Output/*
 Scripts/code/*
