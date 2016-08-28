@@ -33,8 +33,14 @@ for year in range(1978,2014):
         #Create month strings, padded to two characters (e.g. "01")
         month0 = str(mo).zfill(2)
         month1 = str(mo+1).zfill(2)
+        #Fix if month 13 (Jan of following year)
+        #if month1 == '13':
+        #    month1 = '01'
+        #    year += 1
         #Get days in month from the dictionary
         daysInMonth = dayDict[mo]
+        #If feb in a leap year, set days to 29
+        if (year % 4 == 0) and (mo == 2): daysInMonth = 29
         print "[Year: {}]...processing month {} to {}".format(year,month0,month1)
         ##--PROCESS U VECTORS---
         for direction in ("u","v"):
@@ -66,7 +72,10 @@ for year in range(1978,2014):
                     outFN = os.path.join(simDir,"{}AtSurface".format(direction),"{}s_{}_{}_{}_120000.ASC".format(direction,year,month0,dayNo))
                 else:
                     dayNo = str(dayNo - daysInMonth).zfill(2)
-                    outFN = os.path.join(simDir,"{}AtSurface".format(direction),"{}s_{}_{}_{}_120000.ASC".format(direction,year,month1,dayNo))
+                    if month1 <> '13':
+                        outFN = os.path.join(simDir,"{}AtSurface".format(direction),"{}s_{}_{}_{}_120000.ASC".format(direction,year,month1,dayNo))
+                    else:
+                        outFN = os.path.join(simDir,"{}AtSurface".format(direction),"{}s_{}_{}_{}_120000.ASC".format(direction,year+1,"01",dayNo))
                 arrChange = i * arrDiff
                 outArr = arr0 + arrChange
                 np.savetxt(outFN,outArr,fmt="%2.6f")
