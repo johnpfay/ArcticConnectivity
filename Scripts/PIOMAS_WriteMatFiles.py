@@ -27,6 +27,11 @@ simDir = os.path.join(dataDir,"SimDir")
 if not os.path.exists(simDir):
     os.mkdir(simDir)
 
+#Create GISFiles folder in simdir
+gisDir = os.path.join(simDir,"GISFiles")
+if not os.path.exists(gisDir):
+    os.mkdir(gisDir)
+
 #Get extent feature class and raster, located in the Data/General folder
 extentFC = os.path.join(rootDir,"Data","General","MaskPoly.shp")
 maskRaster = os.path.join(rootDir,"Data","General","PIOMAS_Mask.img")
