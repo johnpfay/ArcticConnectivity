@@ -21,7 +21,7 @@
 # July 2015
 # John.Fay@duke.edu
 
-import sys, os, gzip, arcpy
+import sys, os, gzip, arcpy, math
 import numpy as np
 import pandas as pd
 
@@ -109,22 +109,28 @@ for year in range(2012,2013):
         sliceV = flatArr[month*20 + 10,:,:]
         
         #Create the output point file
-        outFN = "Pts{}{}.shp".format(year,strMonth)
+        outFN = "Z_Pts{}{}.shp".format(year,strMonth)
         outFC2 = os.path.join(outDir,"PointFeatures",outFN)
         if arcpy.Exists(os.path.join(outDir,outFC2)):
             print "Already created, skipping."
-            continue
+            #continue
         print "   ...Creating point file for month: {}".format(strMonth)
         outFC = arcpy.CreateFeatureclass_management("in_memory","tmp","POINT",spatial_reference=srWGS84)
         
         #Add fields
         print "   ...Adding fields"
+        arcpy.AddField_management(outFC,"Lat","FLOAT",10,8)
+        arcpy.AddField_management(outFC,"Lng","FLOAT",10,8)
         arcpy.AddField_management(outFC,"Angle","FLOAT",8,2)
         arcpy.AddField_management(outFC,"U","FLOAT",8,2)
         arcpy.AddField_management(outFC,"V","FLOAT",8,2)
-
+        arcpy.AddField_management(outFC,"Bearing_1","FLOAT",8,2) #Computed from U/V
+        arcpy.AddField_management(outFC,"Bearing_2","FLOAT",8,2) #Adjusted by addng angle
+        arcpy.AddField_management(outFC,"U1","FLOAT",8,2)
+        arcpy.AddField_management(outFC,"V1","FLOAT",8,2)
+        
         #Loop through each data point and add ad features to the output feature class
-        cursor = arcpy.da.InsertCursor(outFC,['SHAPE@XY','Angle','U','V'])
+        cursor = arcpy.da.InsertCursor(outFC,['SHAPE@XY','Lng','Lat','Angle','U','V','Bearing_1','Bearing_2','U1','V1'])
         for x in range(yDim):
             for y in range(xDim):
                 theLat = latArr[x,y]
@@ -132,9 +138,24 @@ for year in range(2012,2013):
                 theAngle = anglArr[x,y]
                 theU = sliceU[x,y]
                 theV = sliceV[x,y]
-                theRec = ((theLng,theLat),theAngle,theU,theV)
+                if theU == 0 and theV == 0: continue
+                #Compute the bearings (in degrees) in GOCC from U and V 
+                bearing1 = math.degrees(math.atan2(theV,theU)) 
+                bearing2 = bearing1 + theAngle
+                #Compute the magnitude
+                magnitude = math.sqrt(theU**2 + theV**2)
+                #Decompose bearing 2 back into U and V
+                U1 = math.sin(math.radians(bearing2))*magnitude
+                V1 = math.cos(math.radians(bearing2))*magnitude
+                #Write values to the table and insert the row
+                theRec = ((theLng,theLat),theLng,theLat,theAngle,theU,theV,bearing1,bearing2,U1,V1)
                 cursor.insertRow(theRec)
         del cursor
+
+        #Save the raster
+        print "   ...Saving raster"
+        outFC2 = arcpy.CopyFeatures_management(outFC, outFC2)
+        sys.exit(0)
         
         #Reproject to EASE grid
         print "   ...reprojecting to EASE projection"
