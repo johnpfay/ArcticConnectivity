@@ -6,11 +6,20 @@ log
 Data/PolarScienceCenter/PIOMAS/RawData/*.*
 Data/PolarScienceCenter/PIOMAS/Processed/ASCII/*.ASC
 Data/PolarScienceCenter/PIOMAS/Processed/PointFeatures/*.*
-Data/PolarScienceCenter/PIOMAS/Processed/Raster/*.*
+Data/PolarScienceCenter/PIOMAS/Processed/Raster/*
 Data/SimDir/*
 Data/SimDir/GISFiles/*.*
 
 #Results
+Data/Arctic_Feb2012_265day_Results.zip
 Data/Arctic_Feb2012_265day_Results/*
 #Data/Treml_Arctic_Output/*
 Scripts/code/*
+Data/AMSAIIC_PolarCod_Spawning.zip
+Data/AMSAIIC_PolarCod_Spawning/*
+Data/ECCO/*
+Data/PolarScienceCenter/PIOMAS/Processed/*.zip
+
+Data/PolarScienceCenter/PIOMAS/Processed/Raster2/*
+Data/PolarScienceCenter/PIOMAS/scripts.zip
+Data/PolarScienceCenter/PIOMAS/IDLscripts/*
