@@ -21,7 +21,8 @@ n_month=1
 iregion=1      ;iregion=1, arctic; 2, antarctic; 3, global
 
   scale=3.0*40.0*1000.0
-  scale=2500.0*scale
+  ;scale=2500.0*scale
+  scale=5*scale
 
 openfile0=strarr(data_source) & openfile00=strarr(data_source)
 openfile=strarr(data_source) & openfile1=strarr(data_source)
