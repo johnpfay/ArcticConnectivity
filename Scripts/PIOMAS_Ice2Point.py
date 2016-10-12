@@ -134,13 +134,14 @@ for year in range(2004,2005):
         arcpy.AddField_management(outFC,"Angle","FLOAT",8,2)
         arcpy.AddField_management(outFC,"U","FLOAT",8,2)
         arcpy.AddField_management(outFC,"V","FLOAT",8,2)
+        arcpy.AddField_management(outFC,"Mag","FLOAT",8,2)
         arcpy.AddField_management(outFC,"Bearing_1","FLOAT",8,2) #Computed from U/V
         arcpy.AddField_management(outFC,"Bearing_2","FLOAT",8,2) #Adjusted by addng angle
         arcpy.AddField_management(outFC,"U1","FLOAT",8,2)
         arcpy.AddField_management(outFC,"V1","FLOAT",8,2)
         
         #Loop through each data point and add ad features to the output feature class
-        cursor = arcpy.da.InsertCursor(outFC,['SHAPE@','Lng','Lat','Angle','U','V','Bearing_1','Bearing_2','U1','V1'])
+        cursor = arcpy.da.InsertCursor(outFC,['SHAPE@','Lng','Lat','Angle','U','V','Mag','Bearing_1','Bearing_2','U1','V1'])
         for x in range(yDim):
             for y in range(xDim):
                 theLat = latArr[x,y]
@@ -157,14 +158,14 @@ for year in range(2004,2005):
                 #Decompose bearing 2 back into U and V
                 U1 = math.sin(math.radians(bearing2))*magnitude
                 V1 = math.cos(math.radians(bearing2))*magnitude
-                #From Zhang's script
+                #From Zhang's script ###SAME AS ATAN2(v,u)###
                 alpha = -1.0 * math.radians(theAngle)
                 vec0 = theU * math.cos(alpha) + theV * math.sin(alpha)
                 vec1 = theV * math.cos(alpha) - theU * math.sin(alpha)
                 #From Zhang's script, lines 189
                 scale = 3.0*40.0*1000.0*25.0
-                xhead = theLng+vec0/637000.0/math.cos(theLat/57.29578*scale)
-                yhead = theLat+vec1/637000.0*scale
+                xhead = theLng+U1/637000.0/math.cos(theLat/57.29578*scale)
+                yhead = theLat+V1/637000.0*scale
                 if yhead > 90:
                     yhead = 90 - (yhead - 90)
                     xhead = xhead + 180
@@ -173,7 +174,7 @@ for year in range(2004,2005):
                 theLine = arcpy.Polyline(lineArr)
                 #Write values to the table and insert the row
                 #theRec = ((theLng,theLat),theLng,theLat,theAngle,theU,theV,bearing1,bearing2,xhead,yhead)
-                theRec = (theLine,theLng,theLat,theAngle,theU,theV,bearing1,bearing2,vec0,vec1)
+                theRec = (theLine,theLng,theLat,theAngle,theU,theV,magnitude,bearing1,bearing2,U1,V1)
                 cursor.insertRow(theRec)
         del cursor
 
