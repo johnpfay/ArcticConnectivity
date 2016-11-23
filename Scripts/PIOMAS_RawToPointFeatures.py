@@ -87,7 +87,7 @@ for year in range(startYear,endYear):
         ## the 1st dimension is further subset into: Month/Depth Level/U-V slices
 
     #Loop through the 12 months of data in the yearly data file
-    for month in range(12):
+    for month in range(1):
         strMonth = str(month+1).zfill(2)
         print "...processing month {}".format(strMonth)
         
@@ -109,12 +109,18 @@ for year in range(startYear,endYear):
         
         #Add fields
         print "   ...Adding fields"
+        arcpy.AddField_management(outFC,"Lat","FLOAT",10,8)
+        arcpy.AddField_management(outFC,"Lng","FLOAT",10,8)
         arcpy.AddField_management(outFC,"Angle","FLOAT",8,2)
-        arcpy.AddField_management(outFC,"U","FLOAT",8,2)
-        arcpy.AddField_management(outFC,"V","FLOAT",8,2)
+        arcpy.AddField_management(outFC,"zhangU","FLOAT",8,2)       #Zhang's U (GOCC)
+        arcpy.AddField_management(outFC,"zhangV","FLOAT",8,2)       #Zhang's V (GOCC)
+        arcpy.AddField_management(outFC,"Bearing1","FLOAT",8,2)     #Bearing based on Zhangs U/V
+        arcpy.AddField_management(outFC,"Bearing2","FLOAT",8,2)     #Adjusted by adding angle
+        arcpy.AddField_management(outFC,"U1","FLOAT",8,2)           #Adjusted U (WGS84)
+        arcpy.AddField_management(outFC,"V1","FLOAT",8,2)           #Adjusted V (WGS84)
 
         #Loop through each data point and add ad features to the output feature class
-        cursor = arcpy.da.InsertCursor(outFC,['SHAPE@XY','Angle','U','V'])
+        cursor = arcpy.da.InsertCursor(outFC,['SHAPE@XY','Lat','Lng','Angle','zhangU','zhangV',"Bearing1","Bearing2","U1","V1"])
         for x in range(yDim):
             for y in range(xDim):
                 theLat = latArr[x,y]
@@ -122,11 +128,29 @@ for year in range(startYear,endYear):
                 theAngle = anglArr[x,y]
                 theU = sliceU[x,y]
                 theV = sliceV[x,y]
-                theRec = ((theLng,theLat),theAngle,theU,theV)
+                
+                #If the U and V are both zero, do not add the point
+                #if theU == 0 and theV == 0: continue
+                
+                #Compute the bearings (in degrees) in GOCC from U and V 
+                bearing1 = math.degrees(math.atan2(theV,theU)) 
+                bearing2 = bearing1 + theAngle
+                
+                #Compute the magnitude (Pythagorean theorem)
+                magnitude = math.sqrt(theU**2 + theV**2)
+                
+                #Decompose bearing 2 back into U and V
+                U1 = math.sin(math.radians(bearing2))*magnitude
+                V1 = math.cos(math.radians(bearing2))*magnitude
+                
+                #Write values to the table and insert the row
+                theRec = ((theLng,theLat),theLng,theLat,theAngle,theU,theV,bearing1,bearing2,U1,V1)
                 cursor.insertRow(theRec)
+
         del cursor
         
         #Reproject to EASE grid
-        print "   ...reprojecting to EASE projection"
-        outFC2 = arcpy.Project_management(outFC,outFC2,srEASE)
+        #print "   ...reprojecting to EASE projection"
+        #outFC2 = arcpy.Project_management(outFC,outFC2,srEASE)
+        outFC2 = arcpy.CopyFeatures_management(outFC,outFC2)
         
