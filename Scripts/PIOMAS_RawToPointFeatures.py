@@ -21,6 +21,8 @@ import sys, os, gzip, arcpy
 import numpy as np
 
 #Set output options
+startYear = 2013
+endYear = 2014
 createASCII = True
 writeRasters = False
 
@@ -74,7 +76,7 @@ lngArr = flatArr[1,:,:]
 anglArr = flatArr[6,:,:] #Angle
 
 #Loop through years
-for year in range(1978,2014):
+for year in range(startYear,endYear):
     print "Processing data for {}".format(year)
     yearFN = os.path.join(rawDir,"uo1_10.H{}.gz".format(year))
     #Read the entire annual data (all levels) into array
