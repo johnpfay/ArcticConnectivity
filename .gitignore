@@ -6,6 +6,18 @@ log
 Data/PolarScienceCenter/PIOMAS/RawData/*.*
 Data/PolarScienceCenter/PIOMAS/Processed/ASCII/*.ASC
 Data/PolarScienceCenter/PIOMAS/Processed/PointFeatures/*.*
-Data/PolarScienceCenter/PIOMAS/Processed/Rasters/*.*
+Data/PolarScienceCenter/PIOMAS/Processed/Raster/*.*
+Data/PolarScienceCenter/PIOMAS/Processed/Raster2/*.*
 Data/SimDir/*.ASC
 Data/SimDir/GISFiles/*.*
+
+#Treml outputs
+Data/SimDir/uAtSurface/*.ASC
+Data/SimDir/vAtSurface/*.ASC
+Scripts/code/*
+
+#Exploring PIOMAS IDL maps
+Scripts/PIOMAS_MapPrinting/*
+
+#ECCO data
+Data/ECCO/*
