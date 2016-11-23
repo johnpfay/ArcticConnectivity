@@ -96,7 +96,7 @@ lngArr = flatArr[1,:,:]
 anglArr = flatArr[6,:,:] #Angle
 
 #Loop through years
-for year in range(2004,2005):
+for year in range(2013,2014):
     print "Processing data for {}".format(year)
     yearFN = os.path.join(rawDir,"icevel.H{}.gz".format(year))
     #Read the entire annual data (all levels) into array
@@ -159,13 +159,13 @@ for year in range(2004,2005):
                 U1 = math.sin(math.radians(bearing2))*magnitude
                 V1 = math.cos(math.radians(bearing2))*magnitude
                 #From Zhang's script ###SAME AS ATAN2(v,u)###
-                alpha = -1.0 * math.radians(theAngle)
+                alpha = -1.0 * math.radians(bearing2)
                 vec0 = theU * math.cos(alpha) + theV * math.sin(alpha)
                 vec1 = theV * math.cos(alpha) - theU * math.sin(alpha)
                 #From Zhang's script, lines 189
                 scale = 3.0*40.0*1000.0*25.0
-                xhead = theLng+U1/637000.0/math.cos(theLat/57.29578*scale)
-                yhead = theLat+V1/637000.0*scale
+                xhead = theLng+vec0/637000.0/math.cos(theLat/57.29578*scale)
+                yhead = theLat+vec1/637000.0*scale
                 if yhead > 90:
                     yhead = 90 - (yhead - 90)
                     xhead = xhead + 180
@@ -174,7 +174,7 @@ for year in range(2004,2005):
                 theLine = arcpy.Polyline(lineArr)
                 #Write values to the table and insert the row
                 #theRec = ((theLng,theLat),theLng,theLat,theAngle,theU,theV,bearing1,bearing2,xhead,yhead)
-                theRec = (theLine,theLng,theLat,theAngle,theU,theV,magnitude,bearing1,bearing2,U1,V1)
+                theRec = (theLine,theLng,theLat,theAngle,theU,theV,magnitude,bearing1,bearing2,xhead,yhead)
                 cursor.insertRow(theRec)
         del cursor
 

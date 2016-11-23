@@ -13,8 +13,8 @@ pro hi2, ps=ps
   ; Set up PostScript file or plotting window.
   ;if keyword_set(ps) then begin
     set_plot, 'PS'
-    device, filename='Jan2012.ps', /inches, xsize=10, ysize=10.0, $
-      xoffset=0.75, yoffset=2, $
+    device, filename='icevelH2004.ps', /inches, xsize=20, ysize=20.0, $
+      xoffset=0, yoffset=0, $
       /portrait, /color, bits_per_pixel=8
  ; endif else begin
   ;  window, /free, xsize=500, ysize=500
@@ -27,7 +27,7 @@ pro hi2, ps=ps
   iregion=1      ;iregion=1, arctic; 2, antarctic; 3, global
 
   scale=3.0*40.0*1000.0
-  scale=2500.0*scale
+  scale=1000.0*scale
 
   openfile0=strarr(data_source) & openfile00=strarr(data_source)
   openfile=strarr(data_source) & openfile1=strarr(data_source)
