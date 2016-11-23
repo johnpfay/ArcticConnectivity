@@ -28,6 +28,8 @@ dayDict = {1:31,2:28,3:31,4:30,5:31,6:30,7:31,8:31,9:30,10:31,11:30,12:31}
 #Loop through each year
 for year in range(1978,2014):
     print "Processing year: {}".format(year)
+    #Adjust for leap years
+    if year%4 = 0: dayDict[2] = 29
     #Look through each month
     for mo in range(1,13):
         #Create month strings, padded to two characters (e.g. "01")
@@ -66,7 +68,11 @@ for year in range(1978,2014):
                     outFN = os.path.join(simDir,"{}AtSurface".format(direction),"{}s_{}_{}_{}_120000.ASC".format(direction,year,month0,dayNo))
                 else:
                     dayNo = str(dayNo - daysInMonth).zfill(2)
-                    outFN = os.path.join(simDir,"{}AtSurface".format(direction),"{}s_{}_{}_{}_120000.ASC".format(direction,year,month1,dayNo))
+                    if month1 <> '13':
+                        outFN = os.path.join(simDir,"{}AtSurface".format(direction),"{}s_{}_{}_{}_120000.ASC".format(direction,year,month1,dayNo))
+                    else:
+                        #If month = '13' then it's January of the following year...
+                        outFN = os.path.join(simDir,"{}AtSurface".format(direction),"{}s_{}_{}_{}_120000.ASC".format(direction,year+1,"01",dayNo))
                 arrChange = i * arrDiff
                 outArr = arr0 + arrChange
                 np.savetxt(outFN,outArr,fmt="%2.6f")
