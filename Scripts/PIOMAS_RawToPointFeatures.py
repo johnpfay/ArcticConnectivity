@@ -75,6 +75,10 @@ lngArr = flatArr[1,:,:]
 ##HUWArr = flatArr[5,:,:]
 anglArr = flatArr[6,:,:] #Angle
 
+#Read in EASE correction values
+easeCSV = os.path.join(rawDir,'EASEcorrection.csv')
+easeArr = np.loadtxt(easeCSV).reshape(yDim,xDim)
+
 #Loop through years
 for year in range(startYear,endYear):
     print "Processing data for {}".format(year)
@@ -152,11 +156,8 @@ for year in range(startYear,endYear):
         #Reproject to EASE grid
         #print "   ...reprojecting to EASE projection"
         #outFC2 = arcpy.Project_management(outFC,outFC2,srEASE)
-        #outFC2 = arcpy.CopyFeatures_management(outFC,outFC2)
+        outFC2 = arcpy.CopyFeatures_management(outFC,outFC2)
 
-        #Compute the near direction
-        centerPt = os.path.join(dataDir,'GOCC_Center_EASEprj.shp')
-        nearOut = arcpy.Near_analysis(outFC,centerPt,"","NO_LOCATION","ANGLE","PLANAR")
-        #Update U1 and V1 fields
+
         
         
