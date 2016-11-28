@@ -103,11 +103,11 @@ for year in range(startYear,endYear):
         sliceV = flatArr[month*20 + 10,:,:]
         
         #Create the output point file
-        outFN = "Pts{}{}.shp".format(year,strMonth)
+        outFN = "APts{}{}.shp".format(year,strMonth)
         outFC2 = os.path.join(outDir,"PointFeatures",outFN)
         if arcpy.Exists(os.path.join(outDir,outFC2)):
             print "Already created, skipping."
-            continue
+            #continue
         print "   ...Creating point file for month: {}".format(strMonth)
         outFC = arcpy.CreateFeatureclass_management("in_memory","tmp","POINT",spatial_reference=srWGS84)
         
@@ -116,39 +116,44 @@ for year in range(startYear,endYear):
         arcpy.AddField_management(outFC,"Lat","FLOAT",10,8)
         arcpy.AddField_management(outFC,"Lng","FLOAT",10,8)
         arcpy.AddField_management(outFC,"Angle","FLOAT",8,2)
-        arcpy.AddField_management(outFC,"zhangU","FLOAT",8,2)       #Zhang's U (GOCC)
-        arcpy.AddField_management(outFC,"zhangV","FLOAT",8,2)       #Zhang's V (GOCC)
-        arcpy.AddField_management(outFC,"Bearing1","FLOAT",8,2)     #Bearing based on Zhangs U/V
-        arcpy.AddField_management(outFC,"Bearing2","FLOAT",8,2)     #Adjusted by adding angle
-        arcpy.AddField_management(outFC,"U1","FLOAT",8,2)           #Adjusted U (WGS84)
-        arcpy.AddField_management(outFC,"V1","FLOAT",8,2)           #Adjusted V (WGS84)
+        arcpy.AddField_management(outFC,"NearAngle","FLOAT",8,2)
+        arcpy.AddField_management(outFC,"goccU","FLOAT",8,2)        #Native U value (GOCC)
+        arcpy.AddField_management(outFC,"goccV","FLOAT",8,2)        #Native V value (GOCC)
+        arcpy.AddField_management(outFC,"NAT_Dir","FLOAT",8,2)      #Bearing based on Zhangs U/V
+        arcpy.AddField_management(outFC,"NAT_Mag","FLOAT",8,2)      #Magnitude based on Zhangs U/V
+        arcpy.AddField_management(outFC,"EASE_Dir","FLOAT",8,2)     #Adjusted bearing (EASE)
+        arcpy.AddField_management(outFC,"U1","FLOAT",8,2)           #Adjusted U (EASE)
+        arcpy.AddField_management(outFC,"V1","FLOAT",8,2)           #Adjusted V (EASE)
 
         #Loop through each data point and add ad features to the output feature class
-        cursor = arcpy.da.InsertCursor(outFC,['SHAPE@XY','Lat','Lng','Angle','zhangU','zhangV',"Bearing1","Bearing2","U1","V1"])
+        cursor = arcpy.da.InsertCursor(outFC,['SHAPE@XY','Lat','Lng','Angle','NearAngle','goccU','goccV',
+                                              "NAT_Dir","NAT_Mag","EASE_Dir","U1","V1"])
         for x in range(yDim):
             for y in range(xDim):
                 theLat = latArr[x,y]
                 theLng = lngArr[x,y]
                 theAngle = anglArr[x,y]
-                theU = sliceU[x,y]
-                theV = sliceV[x,y]
+                goccU = sliceU[x,y] 
+                goccV = sliceV[x,y]
+                nearAngle = easeArr[x,y]    #Angle from EASRCorrection.csv
                 
                 #If the U and V are both zero, do not add the point
-                #if theU == 0 and theV == 0: continue
+                #if goccU == 0 and goccV == 0: continue
                 
                 #Compute the bearings (in degrees) in GOCC from U and V 
-                bearing1 = math.degrees(math.atan2(theV,theU)) 
-                bearing2 = bearing1 + theAngle - 90.0
+                NAT_DIR = math.degrees(math.atan2(goccV,goccU)) 
+                EASE_DIR = NAT_DIR - 90 + nearAngle
                 
                 #Compute the magnitude (Pythagorean theorem)
-                magnitude = math.sqrt(theU**2 + theV**2)
+                magnitude = math.sqrt(goccU**2 + goccV**2)
                 
                 #Decompose bearing 2 back into U and V
-                U1 = math.cos(math.radians(bearing2))*magnitude
-                V1 = math.sin(math.radians(bearing2))*magnitude
+                U1 = math.cos(math.radians(EASE_DIR))*magnitude
+                V1 = math.sin(math.radians(EASE_DIR))*magnitude
                 
                 #Write values to the table and insert the row
-                theRec = ((theLng,theLat),theLng,theLat,theAngle,theU,theV,bearing1,bearing2,U1,V1)
+                theRec = ((theLng,theLat),theLat,theLng,theAngle,nearAngle,goccU,goccV,
+                          NAT_DIR,magnitude,EASE_DIR,U1,V1)
                 cursor.insertRow(theRec)
 
         del cursor
