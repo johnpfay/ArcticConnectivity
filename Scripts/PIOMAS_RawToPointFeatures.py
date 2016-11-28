@@ -134,14 +134,14 @@ for year in range(startYear,endYear):
                 
                 #Compute the bearings (in degrees) in GOCC from U and V 
                 bearing1 = math.degrees(math.atan2(theV,theU)) 
-                bearing2 = bearing1 + theAngle
+                bearing2 = bearing1 + theAngle - 90.0
                 
                 #Compute the magnitude (Pythagorean theorem)
                 magnitude = math.sqrt(theU**2 + theV**2)
                 
                 #Decompose bearing 2 back into U and V
-                U1 = math.sin(math.radians(bearing2))*magnitude
-                V1 = math.cos(math.radians(bearing2))*magnitude
+                U1 = math.cos(math.radians(bearing2))*magnitude
+                V1 = math.sin(math.radians(bearing2))*magnitude
                 
                 #Write values to the table and insert the row
                 theRec = ((theLng,theLat),theLng,theLat,theAngle,theU,theV,bearing1,bearing2,U1,V1)
@@ -152,5 +152,11 @@ for year in range(startYear,endYear):
         #Reproject to EASE grid
         #print "   ...reprojecting to EASE projection"
         #outFC2 = arcpy.Project_management(outFC,outFC2,srEASE)
-        outFC2 = arcpy.CopyFeatures_management(outFC,outFC2)
+        #outFC2 = arcpy.CopyFeatures_management(outFC,outFC2)
+
+        #Compute the near direction
+        centerPt = os.path.join(dataDir,'GOCC_Center_EASEprj.shp')
+        nearOut = arcpy.Near_analysis(outFC,centerPt,"","NO_LOCATION","ANGLE","PLANAR")
+        #Update U1 and V1 fields
+        
         
