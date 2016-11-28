@@ -8,8 +8,10 @@ Data/PolarScienceCenter/PIOMAS/Processed/ASCII/*.ASC
 Data/PolarScienceCenter/PIOMAS/Processed/PointFeatures/*.*
 Data/PolarScienceCenter/PIOMAS/Processed/Raster/*.*
 Data/PolarScienceCenter/PIOMAS/Processed/Raster2/*.*
+Data/PolarScienceCenter/PIOMAS/GOCC_Centers/*
 Data/SimDir/*.ASC
 Data/SimDir/GISFiles/*.*
+Data/EASE_Rotation/*
 
 #Treml outputs
 Data/SimDir/uAtSurface/*.ASC
