@@ -122,12 +122,12 @@ for year in range(startYear,endYear):
         arcpy.AddField_management(outFC,"NAT_Dir","FLOAT",8,2)      #Bearing based on Zhangs U/V
         arcpy.AddField_management(outFC,"NAT_Mag","FLOAT",8,2)      #Magnitude based on Zhangs U/V
         arcpy.AddField_management(outFC,"EASE_Dir","FLOAT",8,2)     #Adjusted bearing (EASE)
-        arcpy.AddField_management(outFC,"U1","FLOAT",8,2)           #Adjusted U (EASE)
-        arcpy.AddField_management(outFC,"V1","FLOAT",8,2)           #Adjusted V (EASE)
+        arcpy.AddField_management(outFC,"EASE_U","FLOAT",8,2)           #Adjusted U (EASE)
+        arcpy.AddField_management(outFC,"EASE_V","FLOAT",8,2)           #Adjusted V (EASE)
 
         #Loop through each data point and add ad features to the output feature class
         cursor = arcpy.da.InsertCursor(outFC,['SHAPE@XY','Lat','Lng','Angle','NearAngle','U','V',
-                                              "NAT_Dir","NAT_Mag","EASE_Dir","U1","V1"])
+                                              "NAT_Dir","NAT_Mag","EASE_Dir","EASE_U","EASE_V"])
         for x in range(yDim):
             for y in range(xDim):
                 theLat = latArr[x,y]
@@ -148,12 +148,12 @@ for year in range(startYear,endYear):
                 magnitude = math.sqrt(U**2 + V**2)
                 
                 #Decompose bearing 2 back into U and V
-                U1 = math.cos(math.radians(EASE_DIR))*magnitude
-                V1 = math.sin(math.radians(EASE_DIR))*magnitude
+                EASE_U = math.cos(math.radians(EASE_DIR))*magnitude
+                EASE_V = math.sin(math.radians(EASE_DIR))*magnitude
                 
                 #Write values to the table and insert the row
                 theRec = ((theLng,theLat),theLat,theLng,theAngle,nearAngle,U,V,
-                          NAT_DIR,magnitude,EASE_DIR,U1,V1)
+                          NAT_DIR,magnitude,EASE_DIR,EASE_U,EASE_V)
                 cursor.insertRow(theRec)
 
         del cursor
