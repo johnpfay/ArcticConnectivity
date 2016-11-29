@@ -1,4 +1,4 @@
-#PIOMAS_RawToPointFeatures.py
+#PIOMAS_IceVelTest.py
 #
 # Reads data in from two sets of files: grid.dat.pop and the monthly
 #  sea ice velocity vectors (u,v) for years 1979-2013, and converts
@@ -21,8 +21,8 @@ import sys, os, gzip, arcpy
 import numpy as np
 
 #Set output options
-startYear = 2013
-endYear = 2014
+startYear = 2004
+endYear = 2005
 createASCII = True
 writeRasters = False
 
@@ -82,7 +82,7 @@ easeArr = np.loadtxt(easeCSV).reshape(yDim,xDim)
 #Loop through years
 for year in range(startYear,endYear):
     print "Processing data for {}".format(year)
-    yearFN = os.path.join(rawDir,"uo1_10.H{}.gz".format(year))
+    yearFN = os.path.join(rawDir,"icevel.H{}.gz".format(year))
     #Read the entire annual data (all levels) into array
     with gzip.open(yearFN,'rb') as grdFile:
         grdData = grdFile.read()
@@ -99,11 +99,11 @@ for year in range(startYear,endYear):
         ##There are 20 records for each month; the 1st 10 are u values for the 10 depths
         ##and the remaining 10 are v values for the 10 depths. We just one the 1st depth
         ##so we want 0,20,40,...,220 for u values and 10,30,50,...230 for v values. 
-        sliceU = flatArr[month*20,:,:]
-        sliceV = flatArr[month*20 + 10,:,:]
+        sliceU = flatArr[month*2,:,:]
+        sliceV = flatArr[month*2 + 1,:,:]
         
         #Create the output point file
-        outFN = "APts{}{}.shp".format(year,strMonth)
+        outFN = "IceVel_Pts{}{}.shp".format(year,strMonth)
         outFC2 = os.path.join(outDir,"PointFeatures",outFN)
         if arcpy.Exists(os.path.join(outDir,outFC2)):
             print "Already created, skipping."
