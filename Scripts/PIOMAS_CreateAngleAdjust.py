@@ -70,6 +70,7 @@ anglArr = flatArr[6,:,:] #Angle
 #Create a feature class of points
 print "Constructing temporary feature class"
 outFC = arcpy.CreateFeatureclass_management(scratchDir,"GOCCpts","POINT",spatial_reference=srWGS84)
+outFC2 = arcpy.CreateFeatureclass_management(scratchDir,"GOCCpts_EASE","POINT",spatial_reference=srWGS84)
 
 #Add fields
 arcpy.AddField_management(outFC,"Lat","FLOAT",10,8)
@@ -89,9 +90,15 @@ for x in range(yDim):
         cursor.insertRow(theRec)
 del cursor
 
+#Project features to EASE North
+# Replace a layer/table view name with a path to a dataset (which can be a layer file) or create the layer/table view within the script
+# The following inputs are layers or table views: "IceVel_Pts200401"
+print "Projecting data"
+arcpy.Project_management(outFC,outFC2,srEASE,"",srWGS84)
+
 #Compute near angles to center point
 print "Computing near angles"
-nearOut = arcpy.Near_analysis(outFC,centerPt,"","NO_LOCATION","ANGLE","PLANAR")
+nearOut = arcpy.Near_analysis(outFC2,centerPt,"","NO_LOCATION","ANGLE","PLANAR")
 
 #Save as a csv file
 print "Writing values to %s" %outCSV 
@@ -109,4 +116,4 @@ outFile.close()
 
 #Delete the outFC
 arcpy.Delete_management(outFC)
-
+arcpy.Delete_management(outFC2)
