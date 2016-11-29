@@ -27,12 +27,12 @@ outDir = os.path.join(dataDir,"Processed")
 pointFCDir = os.path.join(dataDir,"Processed","PointFeatures")          #To hold output point files
 
 ##Input center of GOCC (in EASE coord sys)
-#centerPt = os.path.join(dataDir,'GOCC_Center_EASEprj.shp')
-centerPt = r'C:\Workspace\Gits\ArcticConnectivity\Data\EASE_Rotation\PIOMAS_Center.shp'
+centerPt = os.path.join(dataDir,'GOCC_Centers','GOCC_Center_EASEprj.shp')
+#centerPt = r'C:\Workspace\Gits\ArcticConnectivity\Data\EASE_Rotation\PIOMAS_Center.shp'
 
 ##Output file
 convertToGeom = False
-outCSV = os.path.join(rawDir,"EASEcorrection2.csv")
+outCSV = os.path.join(rawDir,"EASEcorrection.csv")
 
 #ArcPy setup
 arcpy.env.overwriteOutput = True
