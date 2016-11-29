@@ -108,5 +108,5 @@ with arcpy.da.SearchCursor(nearOut,"NEAR_ANGLE") as cursor:
 outFile.close()
 
 #Delete the outFC
-#arcpy.Delete_management(outFC)
+arcpy.Delete_management(outFC)
 
