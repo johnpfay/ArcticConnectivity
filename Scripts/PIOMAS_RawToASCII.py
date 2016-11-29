@@ -99,7 +99,7 @@ for year in range(startYear,endYear):
         ## the 1st dimension is further subset into: Month/Depth Level/U-V slices
 
     #Loop through the 12 months of data in the yearly data file
-    for month in range(1):
+    for month in range(12):
         strMonth = str(month+1).zfill(2)
         print "...processing month {}".format(strMonth)
         
@@ -173,8 +173,8 @@ for year in range(startYear,endYear):
         #Interpolate U and V values to raster
         print "   ...Interpolating to raster"
         #Create u and v rasters via Spline method
-        uBand = outSpline = arcpy.sa.Spline(outFC2,"U",25000, "REGULARIZED", 0.1)
-        vBand = outSpline = arcpy.sa.Spline(outFC2,"V",25000, "REGULARIZED", 0.1)
+        uBand = outSpline = arcpy.sa.Spline(outFC2,"EASE_U",25000, "REGULARIZED", 0.1)
+        vBand = outSpline = arcpy.sa.Spline(outFC2,"EASE_V",25000, "REGULARIZED", 0.1)
 
         #Remove data outside of mask
         uBand2 = arcpy.sa.ExtractByMask(uBand,maskRaster)
