@@ -116,44 +116,44 @@ for year in range(startYear,endYear):
         arcpy.AddField_management(outFC,"Lat","FLOAT",10,8)
         arcpy.AddField_management(outFC,"Lng","FLOAT",10,8)
         arcpy.AddField_management(outFC,"Angle","FLOAT",8,2)
-        arcpy.AddField_management(outFC,"NearAngle","FLOAT",8,2)
-        arcpy.AddField_management(outFC,"goccU","FLOAT",8,2)        #Native U value (GOCC)
-        arcpy.AddField_management(outFC,"goccV","FLOAT",8,2)        #Native V value (GOCC)
+        arcpy.AddField_management(outFC,"U","FLOAT",8,2)            #Native U value (GOCC)
+        arcpy.AddField_management(outFC,"V","FLOAT",8,2)            #Native V value (GOCC)
+        arcpy.AddField_management(outFC,"NearAngle","FLOAT",8,2)    #Near angle between PIOMAS point and GOCC center
         arcpy.AddField_management(outFC,"NAT_Dir","FLOAT",8,2)      #Bearing based on Zhangs U/V
         arcpy.AddField_management(outFC,"NAT_Mag","FLOAT",8,2)      #Magnitude based on Zhangs U/V
         arcpy.AddField_management(outFC,"EASE_Dir","FLOAT",8,2)     #Adjusted bearing (EASE)
-        arcpy.AddField_management(outFC,"U1","FLOAT",8,2)           #Adjusted U (EASE)
-        arcpy.AddField_management(outFC,"V1","FLOAT",8,2)           #Adjusted V (EASE)
+        arcpy.AddField_management(outFC,"EASE_U","FLOAT",8,2)           #Adjusted U (EASE)
+        arcpy.AddField_management(outFC,"EASE_V","FLOAT",8,2)           #Adjusted V (EASE)
 
         #Loop through each data point and add ad features to the output feature class
-        cursor = arcpy.da.InsertCursor(outFC,['SHAPE@XY','Lat','Lng','Angle','NearAngle','goccU','goccV',
-                                              "NAT_Dir","NAT_Mag","EASE_Dir","U1","V1"])
+        cursor = arcpy.da.InsertCursor(outFC,['SHAPE@XY','Lat','Lng','Angle','NearAngle','U','V',
+                                              "NAT_Dir","NAT_Mag","EASE_Dir","EASE_U","EASE_V"])
         for x in range(yDim):
             for y in range(xDim):
                 theLat = latArr[x,y]
                 theLng = lngArr[x,y]
                 theAngle = anglArr[x,y]
-                goccU = sliceU[x,y] 
-                goccV = sliceV[x,y]
+                U = sliceU[x,y] 
+                V = sliceV[x,y]
                 nearAngle = easeArr[x,y]    #Angle from EASRCorrection.csv
                 
                 #If the U and V are both zero, do not add the point
-                #if goccU == 0 and goccV == 0: continue
+                if U == 0 and V == 0: continue
                 
                 #Compute the bearings (in degrees) in GOCC from U and V 
-                NAT_DIR = math.degrees(math.atan2(goccV,goccU)) 
+                NAT_DIR = math.degrees(math.atan2(V,U)) 
                 EASE_DIR = NAT_DIR - 90 + nearAngle
                 
                 #Compute the magnitude (Pythagorean theorem)
-                magnitude = math.sqrt(goccU**2 + goccV**2)
+                magnitude = math.sqrt(U**2 + V**2)
                 
                 #Decompose bearing 2 back into U and V
-                U1 = math.cos(math.radians(EASE_DIR))*magnitude
-                V1 = math.sin(math.radians(EASE_DIR))*magnitude
+                EASE_U = math.cos(math.radians(EASE_DIR))*magnitude
+                EASE_V = math.sin(math.radians(EASE_DIR))*magnitude
                 
                 #Write values to the table and insert the row
-                theRec = ((theLng,theLat),theLat,theLng,theAngle,nearAngle,goccU,goccV,
-                          NAT_DIR,magnitude,EASE_DIR,U1,V1)
+                theRec = ((theLng,theLat),theLat,theLng,theAngle,nearAngle,U,V,
+                          NAT_DIR,magnitude,EASE_DIR,EASE_U,EASE_V)
                 cursor.insertRow(theRec)
 
         del cursor
