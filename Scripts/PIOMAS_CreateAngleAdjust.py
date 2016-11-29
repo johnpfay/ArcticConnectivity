@@ -2,6 +2,11 @@
 #
 # Creates a csv file of of GOCC to EASE correction angles for each PIOMAS point
 #
+# Converts the PIOMAS grid.dat.pop data into a point feature class with lat,long,
+#  and angle attributes. Then computes the near angle of these point features to
+#  the center of the PIOMAS GOCC coordinate system. These near angles are saved
+#  as a CSV file that can be used to correct angles in later scripts. 
+#
 # November 2015
 # John.Fay@duke.edu
 
@@ -22,11 +27,12 @@ outDir = os.path.join(dataDir,"Processed")
 pointFCDir = os.path.join(dataDir,"Processed","PointFeatures")          #To hold output point files
 
 ##Input center of GOCC (in EASE coord sys)
-centerPt = os.path.join(dataDir,'GOCC_Center_EASEprj.shp')
+#centerPt = os.path.join(dataDir,'GOCC_Center_EASEprj.shp')
+centerPt = r'C:\Workspace\Gits\ArcticConnectivity\Data\EASE_Rotation\PIOMAS_Center.shp'
 
 ##Output file
 convertToGeom = False
-outCSV = os.path.join(rawDir,"EASEcorrection.csv")
+outCSV = os.path.join(rawDir,"EASEcorrection2.csv")
 
 #ArcPy setup
 arcpy.env.overwriteOutput = True
@@ -79,7 +85,7 @@ for x in range(yDim):
         theLng = lngArr[x,y]
                     
         #Write values to the table and insert the row
-        theRec = ((theLng,theLat),theLng,theLat)
+        theRec = ((theLng,theLat),theLat,theLng)
         cursor.insertRow(theRec)
 del cursor
 
@@ -102,5 +108,5 @@ with arcpy.da.SearchCursor(nearOut,"NEAR_ANGLE") as cursor:
 outFile.close()
 
 #Delete the outFC
-arcpy.Delete_management(outFC)
+#arcpy.Delete_management(outFC)
 
