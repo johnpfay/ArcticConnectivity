@@ -11,7 +11,6 @@ Data/PolarScienceCenter/PIOMAS/Processed/Raster2/*.*
 Data/PolarScienceCenter/PIOMAS/GOCC_Centers/*
 Data/SimDir/*.ASC
 Data/SimDir/GISFiles/*.*
-Data/EASE_Rotation/*
 
 #Treml outputs
 Data/SimDir/uAtSurface/*.ASC
@@ -23,3 +22,7 @@ Scripts/PIOMAS_MapPrinting/*
 
 #ECCO data
 Data/ECCO/*
+
+#EASE_Rotation
+Data/EASE_Rotation/*
+EASE_Rotation
