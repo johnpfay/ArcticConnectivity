@@ -21,7 +21,7 @@ import sys, os, gzip, arcpy
 import numpy as np
 
 #Set output options
-startYear = 2013
+startYear = 1978
 endYear = 2014
 createASCII = True
 writeRasters = True
@@ -115,7 +115,7 @@ for year in range(startYear,endYear):
         outFC2 = os.path.join(outDir,"PointFeatures",outFN)
         if arcpy.Exists(os.path.join(outDir,outFC2)):
             print "Already created, skipping."
-            #continue
+            continue
         print "   ...Creating point file for month: {}".format(strMonth)
         outFC = arcpy.CreateFeatureclass_management("in_memory","tmp","POINT",spatial_reference=srWGS84)
         
