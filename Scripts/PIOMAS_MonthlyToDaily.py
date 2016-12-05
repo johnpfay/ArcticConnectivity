@@ -29,7 +29,7 @@ dayDict = {1:31,2:28,3:31,4:30,5:31,6:30,7:31,8:31,9:30,10:31,11:30,12:31}
 for year in range(1978,2014):
     print "Processing year: {}".format(year)
     #Adjust for leap years
-    if year%4 = 0: dayDict[2] = 29
+    if year%4 == 0: dayDict[2] = 29
     #Look through each month
     for mo in range(1,13):
         #Create month strings, padded to two characters (e.g. "01")
