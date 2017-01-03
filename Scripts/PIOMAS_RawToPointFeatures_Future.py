@@ -22,6 +22,7 @@ import numpy as np
 
 #Set output options
 startYear = 2017
+endYear = 2051
 createASCII = True
 writeRasters = False
 
@@ -90,10 +91,14 @@ for year in range(startYear,endYear):
         ## the 1st dimension is further subset into: Month/Depth Level/U-V slices
 
     #Loop through the 12 months of data in the yearly data file
+    for month in range(12):
         strMonth = str(month+1).zfill(2)
         print "...processing month {}".format(strMonth)
         
         #Get the data for the current month
+        ##There are 60 records for each month; the 1st 30 are u values for the 30 depths
+        ##and the remaining 30 are v values for the 30 depths. We just one the 1st depth
+        ##so we want 0,60,120,...,660 for u values and 30,90,150,...690 for v values. 
         sliceU = flatArr[month*60,:,:]
         sliceV = flatArr[month*60 + 30,:,:]
         
